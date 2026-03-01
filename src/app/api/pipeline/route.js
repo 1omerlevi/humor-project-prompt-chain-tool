@@ -90,7 +90,16 @@ async function generateCaptions({ imageId, humorFlavorId }, token, timeoutMs = 4
 
   if (!first.res.ok && humorFlavorId) {
     const m = msgFrom(first.data, first.raw).toLowerCase()
-    if (m.includes('unexpected') || m.includes('invalid') || m.includes('schema') || m.includes('body')) {
+    const looksLikeRequestBodyIssue =
+      m.includes('unexpected') ||
+      m.includes('invalid') ||
+      m.includes('schema') ||
+      m.includes('body') ||
+      m.includes('json') ||
+      m.includes('unterminated fractional number') ||
+      m.includes('parse')
+
+    if (looksLikeRequestBodyIssue) {
       first = await proxy('/pipeline/generate-captions', { imageId }, token, timeoutMs)
     }
   }
